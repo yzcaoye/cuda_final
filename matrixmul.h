@@ -63,5 +63,15 @@ typedef struct {
 } Matrix;
 
 
+void Check_CUDA_Error(const char *message);
+void cudasafe(cudaError_t error, char* message);
+
+Matrix AllocateDeviceMatrix(const Matrix M);
+Matrix AllocateMatrix(int height, int width, float init);
+void FreeDeviceMatrix(Matrix* M);
+void FreeMatrix(Matrix* M);
+void CopyToDeviceMatrix(Matrix Mdevice, const Matrix Mhost);
+void CopyFromDeviceMatrix(Matrix Mhost, const Matrix Mdevice);
+
 #endif // _MATRIXMUL_H_
 

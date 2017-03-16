@@ -8,17 +8,21 @@
 #include <math.h>
 #include "helper_cuda.h"
 #include "helper_string.h"
+<<<<<<< HEAD
 #include <windows.h>
 #include<fstream>
 #include<iostream>
 #include<iomanip>
 
 using namespace std;
+=======
+>>>>>>> origin/master
 
 #define PI 3.14159265
 #define deltaT 0.0075
 #define paraA 0.35
 #define WIDTH 32
+<<<<<<< HEAD
 #define SIZE 1024
 __constant__ float deltaX[1];
 __constant__ float deltaY[1];
@@ -40,6 +44,21 @@ __global__ void calOne(Matrix oi, Matrix tempRecordOi2, Matrix tempRecordOi32);
 __device__ float* getFOIf(float *in, int i, int width);
 __global__ void allCal_new(Matrix newOi, Matrix oi, Matrix tempRecordOi2, Matrix tempRecordOi4, Matrix tempRecordOi6, Matrix tempRecordOi32);
 
+=======
+>>>>>>> origin/master
+
+
+__global__ void periodicalize(Matrix in);
+__device__ float laplaceCal(float front, float back, float deltaX, float deltaY, float num);
+__device__ float frontCal(float *in);
+__device__ float backCal(float *in);
+__device__ float* getFOI(Matrix in, int i);
+__device__ float* foiPowOf3(float *foi);
+__device__ void getNowOi(Matrix out, Matrix oi, Matrix tempRecordOi2, Matrix tempRecordOi4, Matrix tempRecordOi6, Matrix tempRecordOi32, int i);
+__global__ void allCal(Matrix newOi, Matrix oi, Matrix tempRecordOi2, Matrix tempRecordOi4, Matrix tempRecordOi6, Matrix tempRecordOi32);
+__global__ void firstCal(Matrix oi, Matrix tempRecordOi2, Matrix tempRecordOi32);
+__device__ float laplaceCal_r(float *in, float deltaX, float deltaY, float num);
+
 
 
 __global__ void addKernel(int *c, const int *a, const int *b)
@@ -57,9 +76,15 @@ int main()
 	float oi0 = 0.3;
 	float qh = sqrt(3.0) / 2;
 	int optionOi = 1;
+<<<<<<< HEAD
 	int areaX = 5;
 	int areaY = 5;
 	int numT = 1;
+=======
+	int areaX = 22;
+	int areaY = 22;
+	int numT = 100;
+>>>>>>> origin/master
 	float deltaX0 = PI / 4;
 	float deltaY0 = PI / 4;
 	int nucleusR = 11;
@@ -194,9 +219,15 @@ int main()
 		printf("%f\t", oi_host.elements[i*(numX + 2) + j]);
 		}
 		printf("\n");
+<<<<<<< HEAD
 		}*/
 
 
+=======
+	}
+	*/
+	
+>>>>>>> origin/master
 	Matrix newoi = AllocateDeviceMatrix(oi_host);
 
 	//Matrix u = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0));
@@ -205,11 +236,14 @@ int main()
 	cudaEventCreate(&start);
 	cudaEventCreate(&stop);
 	cudaEventRecord(start, 0);
+<<<<<<< HEAD
 	Matrix oi = AllocateDeviceMatrix(oi_host);
 	Matrix tempRecordOi2 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
 	Matrix tempRecordOi4 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
 	Matrix tempRecordOi6 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
 	Matrix tempRecordOi32 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
+=======
+>>>>>>> origin/master
 
 	for (int i = 0; i < numT; i++)
 	{
@@ -240,6 +274,7 @@ int main()
 		//test after periodicalize
 		/*printf("oi after periodicalize!\n");
 		for (int i = 0; i < numY + 2; i++){
+<<<<<<< HEAD
 		for (int j = 0; j < numX + 2; j++){
 		printf("%f\t", oi_host.elements[i*(numX + 2) + j]);
 		}
@@ -247,6 +282,20 @@ int main()
 		}*/
 
 		//Matrix oi = AllocateDeviceMatrix(oi_host);
+=======
+			for (int j = 0; j < numX + 2; j++){
+				printf("%f\t", oi_host.elements[i*(numX + 2) + j]);
+			}
+			printf("\n");
+		}
+		*/
+		Matrix oi = AllocateDeviceMatrix(oi_host);
+
+		Matrix tempRecordOi2 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
+		Matrix tempRecordOi4 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
+		Matrix tempRecordOi6 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
+		Matrix tempRecordOi32 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
+>>>>>>> origin/master
 
 		/*Matrix tempRecordOi2 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
 		Matrix tempRecordOi4 = AllocateDeviceMatrix(AllocateMatrix(numX + 2, numY + 2, 0.0));
@@ -256,6 +305,7 @@ int main()
 		float tempx[1] = { deltaX0 + i*0.00005 };
 		float tempy[1] = { deltaY0*(deltaX0 / tempx[0]) };
 
+<<<<<<< HEAD
 
 		cudaMemcpyToSymbol(deltaX, &tempx, sizeof(float));
 		cudaMemcpyToSymbol(deltaY, &tempy, sizeof(float));
@@ -331,16 +381,85 @@ int main()
 
 			}
 			*/
+=======
+		*tempx = deltaX0 + i*0.00005;
+		*tempy = deltaY0*(deltaX0 / *tempx);
+		
+		printf("tempx:%f\n", *tempx);
+		printf("tempy:%f\n", *tempy);
+
+		cudaMemcpyToSymbol(deltaX, tempx, sizeof(float), cudaMemcpyHostToDevice);
+		cudaMemcpyToSymbol(deltaY, tempy, sizeof(float), cudaMemcpyHostToDevice);
+
+		/*
+		cudaMemcpy(&deltaX, tempx, sizeof(float), cudaMemcpyDeviceToHost);
+		cudaMemcpy(&deltaY, tempy, sizeof(float), cudaMemcpyDeviceToHost);
+
+		printf("After tempx:%f\n", *tempx);
+		printf("After tempy:%f\n", *tempy);
+		*/
+		free(tempx);
+		free(tempy);
+>>>>>>> origin/master
 
 
-	}
 
+<<<<<<< HEAD
 	//cudaEventRecord(stop, 0);
 	//cudaEventSynchronize(stop);
 	//float elapsedTime;
 	//cudaEventElapsedTime(&elapsedTime, start, stop);
+=======
+		CopyToDeviceMatrix(oi, oi_host);
+		CopyFromDeviceMatrix(oi_host, oi);
+>>>>>>> origin/master
+
+		/*for (int i = 0; i < numY + 2; i++){
+			for (int j = 0; j < numX + 2; j++){
+				printf("%f\t", oi_host.elements[i*(numX + 2) + j]);
+			}
+			printf("\n");
+		}
+		*/
+		//////////////////////////////////////////////////////////
+
+		dim3 block_size(WIDTH, WIDTH);
+		int grid_rows = oi.height / WIDTH + (oi.height % WIDTH ? 1 : 0);
+		int grid_cols = oi.width / WIDTH + (oi.width % WIDTH ? 1 : 0);
+		dim3 grid_size(grid_cols, grid_rows);
+
+		printf("round: %d\n", i);
+		//allCal<<< grid_size, block_size >>>(newoi, oi, tempRecordOi2, tempRecordOi4, tempRecordOi6, tempRecordOi32);
+		allCal << < 1, 1024 >> >(newoi, oi, tempRecordOi2, tempRecordOi4, tempRecordOi6, tempRecordOi32);
+		//firstCal << < 1, 64 >> >(oi, tempRecordOi2, tempRecordOi32);
+		cudaDeviceSynchronize();
+		//Check_CUDA_Error("Kernel Execution Failed!");
+		
 
 
+		/////////////////////////////////////////////////////////
+
+		CopyFromDeviceMatrix(oi_host, newoi);
+		
+		/*for (int i = 0; i < numY + 2; i++){
+			for (int j = 0; j < numX + 2; j++){
+				printf("%f\t", oi_host.elements[i*(numX + 2) + j]);
+			}
+			printf("\n");
+		}*/
+			
+			if (i == numT - 1){
+			printf("Free device matrix!\n");
+			FreeDeviceMatrix(&tempRecordOi2);
+			FreeDeviceMatrix(&tempRecordOi4);
+			FreeDeviceMatrix(&tempRecordOi6);
+			FreeDeviceMatrix(&tempRecordOi32);
+			FreeDeviceMatrix(&oi);
+			FreeDeviceMatrix(&newoi);
+			
+		}
+
+<<<<<<< HEAD
 	GetLocalTime(&sysstop);
 
 	/*for (int i = 0; i < numY + 2; i++){
@@ -350,8 +469,13 @@ int main()
 		printf("\n");
 
 	}*/
+=======
+			
+>>>>>>> origin/master
 
+	}
 
+<<<<<<< HEAD
 	//	printf("Processing Time: %3.1f ms \n", elapsedTime);
 	printf("Processing Time: %d ms \n", (sysstop.wMilliseconds + sysstop.wSecond * 1000 + sysstop.wMinute * 60000) - (sysstart.wMilliseconds + sysstart.wSecond * 1000 + sysstart.wMinute * 60000));
 
@@ -367,6 +491,9 @@ int main()
 	//	ofile << endl;
 	//}
 	//ofile.close();                //¹Ø±ÕÎÄ¼þ
+=======
+	
+>>>>>>> origin/master
 	/*
 	printf("Free host matrix!");
 	FreeMatrix(&axisX);
@@ -376,7 +503,16 @@ int main()
 	FreeMatrix(&nucleusOi);
 	*/
 
+<<<<<<< HEAD
 	
+=======
+	cudaEventRecord(stop, 0);
+	cudaEventSynchronize(stop);
+	float elapsedTime;
+	cudaEventElapsedTime(&elapsedTime, start, stop);
+
+	printf("Processing Time: %3.1f ms \n", elapsedTime);
+>>>>>>> origin/master
 	
     return 0;
 	
@@ -405,12 +541,17 @@ __global__ void periodicalize(Matrix in) {
 
 __device__ float laplaceCal(float front, float back, float deltaX, float deltaY, float num) {
 	//printf("front:%f, back:%f", front, back);
+<<<<<<< HEAD
 	float res = (front / powf(0.785, num)) + (back / powf(0.785, num));
+=======
+	float res = (front / powf(deltaX, num)) + (back / powf(deltaY, num));
+>>>>>>> origin/master
 	//printf("laplace res: %f", res);
 	return res;
 }
 
 __device__ float laplaceCal_r(float *in, float deltaX, float deltaY, float num){
+<<<<<<< HEAD
 	float res = ((0.125 * (in[2 * 3 + 2] + in[0 * 3 + 2] + in[2 * 3 + 0] + in[0 * 3 + 0]) +
 		0.75 * (in[2 * 3 + 1] + in[0 * 3 + 1]) - 0.25 * (in[2 * 3 + 1] + in[0 * 3 + 1]) - 1.5 * in[1 * 3 + 1])) / powf(deltaX, num)
 		+ (0.125*(in[2 * 3 + 2] + in[0*3+2]+in[2*3+0]+in[0*3+0])+
@@ -418,6 +559,10 @@ __device__ float laplaceCal_r(float *in, float deltaX, float deltaY, float num){
 	//printf("new laplace: %f", res);
 	//printf("deltaX: %f ", deltaX);
 	//printf("deltaY: %f ", deltaY);
+=======
+	float res = (0.125 * (in[2 * 3 + 2] + in[0 * 3 + 2] + in[2 * 3 + 0] + in[0 * 3 + 0]) + 0.75 * (in[2 * 3 + 1] + in[0 * 3 + 1]) - 0.25 * (in[2 * 3 + 1] + in[0 * 3 + 1]) - 1.5 * in[1 * 3 + 1] / powf(deltaX, num));
+	//printf("new laplace: %f", res);
+>>>>>>> origin/master
 	return res;
 }
 
@@ -446,6 +591,7 @@ __device__ float* getFOI(Matrix in, int i) {
 	foi[2*3 + 0] = in.elements[i + in.width - 1];
 	foi[2*3 + 1] = in.elements[i + in.width];
 	foi[2*3 + 2] = in.elements[i + in.width + 1];
+<<<<<<< HEAD
 	
 	return foi;
 }
@@ -464,17 +610,24 @@ __device__ float* getFOIf(float *in, int i, int width) {
 	foi[2 * 3 + 1] = in[i + width];
 	foi[2 * 3 + 2] = in[i + width + 1];
 
+=======
+>>>>>>> origin/master
 	return foi;
 }
 
 __device__ float* foiPowOf3(float *foi) {
+<<<<<<< HEAD
 	float threefoi[9];
 	//float foithree[9];
 	/*
+=======
+	float foithree[9];
+>>>>>>> origin/master
 	foithree[0 + 0] = powf(foi[0], 3.0);
 	foithree[0 + 1] = powf(foi[1], 3.0);
 	foithree[0 + 2] = powf(foi[2], 3.0);
 	foithree[1 * 3 + 0] = powf(foi[3], 3.0);
+<<<<<<< HEAD
 	foithree[1 * 3 + 1] = powf(foi[4], 3.0);
 	foithree[1 * 3 + 2] = powf(foi[5], 3.0);
 	foithree[2 * 3 + 0] = powf(foi[6], 3.0);
@@ -491,6 +644,14 @@ __device__ float* foiPowOf3(float *foi) {
 	threefoi[7] = foi[7] * foi[7] * foi[7];
 	threefoi[8] = foi[8] * foi[8] * foi[8];
 	return threefoi;
+=======
+	foithree[1 * 3 + 1] = foi[1 * 3 + 1] * foi[1 * 3 + 1] * foi[1 * 3 + 1];
+	foithree[1 * 3 + 2] = foi[1 * 3 + 2] * foi[1 * 3 + 2] * foi[1 * 3 + 2];
+	foithree[2 * 3 + 0] = foi[2 * 3 + 0] * foi[2 * 3 + 0] * foi[2 * 3 + 0];
+	foithree[2 * 3 + 1] = foi[2 * 3 + 1] * foi[2 * 3 + 1] * foi[2 * 3 + 1];
+	foithree[2 * 3 + 2] = foi[2 * 3 + 2] * foi[2 * 3 + 2] * foi[2 * 3 + 2];
+	return foithree;
+>>>>>>> origin/master
 }
 
 __device__ void getNowOi(Matrix out, Matrix oi, Matrix tempRecordOi2, Matrix tempRecordOi4, Matrix tempRecordOi6, Matrix tempRecordOi32, int i) {
@@ -503,6 +664,7 @@ __global__ void allCal(Matrix newOi, Matrix oi, Matrix tempRecordOi2, Matrix tem
 //	int col = blockIdx.x * blockDim.x + threadIdx.x;
 //	int row = blockIdx.y * blockDim.y + threadIdx.y;
 	//use col and row represent i?
+<<<<<<< HEAD
 	int i = (blockIdx.y * gridDim.x + blockIdx.x) * blockDim.y * blockDim.x + threadIdx.y * blockDim.x + threadIdx.x;
 	//int blockId = blockIdx.x + blockIdx.y * gridDim.x;
 	//int i = blockId * (blockDim.x * blockDim.y) + (threadIdx.y * blockDim.x) + threadIdx.x;
@@ -811,3 +973,54 @@ __global__ void callThree(Matrix newOi, Matrix oi, Matrix tempRecordOi2, Matrix 
 		newOi.elements[i] = oi.elements[i] + deltaT * ((1 - paraA) * tempRecordOi2.elements[i] + 2 * tempRecordOi4.elements[i] + tempOi6 + tempRecordOi32.elements[i]);
 	}
 }
+=======
+	int i = blockIdx.x *blockDim.x + threadIdx.x;
+
+	if (!(i%oi.width == 0 || i%oi.width == (oi.width - 1) || (i >= 0 && i <= (oi.width - 1)) || (i <= (oi.height*oi.width - 1) && i >= (oi.height - 1)*oi.width) || i >= oi.height*oi.width)) {
+		float *foi = getFOI(oi, i);
+		//float tempOi2 = laplaceCal(frontCal(foi), backCal(foi), deltaX, deltaY, 2.0);
+		float tempOi2 = laplaceCal_r(foi, deltaX, deltaY, 2.0);
+		tempRecordOi2.elements[i] = tempOi2;
+		//printf("tempOi2:%f\t", tempOi2);
+		float *threefoi = foiPowOf3(foi);
+		//float tempOi32 = laplaceCal(frontCal(foi3), backCal(foi3), deltaX, deltaY, 2.0);
+		float tempOi32 = laplaceCal_r(threefoi, deltaX, deltaY, 2.0);
+		tempRecordOi32.elements[i] = tempOi32;
+		//printf("tempOi32:%f\t", tempOi32);
+		__syncthreads;
+		float *twofoi = getFOI(tempRecordOi2, i);
+		//float tempOi4 = laplaceCal(frontCal(foi2), backCal(foi2), deltaX, deltaY, 2);
+		float tempOi4 = laplaceCal_r(twofoi, deltaX, deltaY, 2.0);
+		tempRecordOi4.elements[i] = tempOi4;
+		__syncthreads();
+		float *fourfoi = getFOI(tempRecordOi4, i);
+		//float tempOi6 = laplaceCal(frontCal(foi4), backCal(foi4), deltaX, deltaY, 2);
+		float tempOi6 = laplaceCal_r(fourfoi, deltaX, deltaY, 2.0);
+		tempRecordOi6.elements[i] = tempOi6;
+		newOi.elements[i] = oi.elements[i] + deltaT * ((1 - paraA) * tempOi2 + 2 * tempOi4 + tempOi6 + tempOi32);
+	}
+
+}
+
+
+__global__ void firstCal(Matrix oi, Matrix tempRecordOi2, Matrix tempRecordOi32){
+	//consider using tile?
+	//int col = blockIdx.x * blockDim.x + threadIdx.x;
+	//int row = blockIdx.y * blockDim.y + threadIdx.y;
+	//use col and row represent i?
+	//int i = (blockIdx.y * gridDim.x + blockIdx.x) * blockDim.y * blockDim.x + threadIdx.y * blockDim.x + threadIdx.x;
+	int i = blockIdx.x *blockDim.x + threadIdx.x;
+	
+	if (!(i%oi.width == 0 || i%oi.width == (oi.width - 1) || (i >= 0 && i <= (oi.width - 1)) || (i <= (oi.height*oi.width - 1) && i >= (oi.height - 1)*oi.width)||i>=oi.height*oi.width)){
+		float *foi = getFOI(oi, i);
+		tempRecordOi2.elements[i] = laplaceCal(frontCal(foi), backCal(foi), deltaX, deltaY, 2.0);
+		float *foithree = foiPowOf3(foi);
+		tempRecordOi32.elements[i] = laplaceCal(frontCal(foithree), backCal(foithree), deltaX, deltaY, 2.0);
+	}
+	
+		
+	
+}
+
+
+>>>>>>> origin/master
